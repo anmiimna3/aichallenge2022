@@ -103,7 +103,7 @@ class Path:
 
 
 class Graph:
-    def __init__(self, paths: [], nodes: []):
+    def __init__(self, paths: list, nodes: list):
         self.paths = paths
         self.nodes = nodes
 
@@ -125,7 +125,7 @@ class GameConfig:
                  police_income_each_turn: float,
                  thief_income_each_turn: float,
                  max_turn: int,
-                 visible_turns: [],
+                 visible_turns: list,
                  chat_box_max_size: int,
                  chat_cost_per_char: float):
         self.graph = graph
