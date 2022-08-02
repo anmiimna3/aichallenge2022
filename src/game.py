@@ -1,4 +1,5 @@
 from src import model
+from typing import List
 
 class Game:
     def __init__(self, view : model.GameView):
@@ -22,42 +23,41 @@ class Game:
     def get_balance(self) -> float:
         return self.view.balance
     
-    def get_visible_agents(self) -> list(model.Agent):
+    def get_visible_agents(self) -> List[model.Agent]:
         return self.view.visible_agents
     
-    def get_chat_box(self) -> list(model.Chat):
+    def get_chat_box(self) -> List[model.Chat]:
         return self.view.chat_box
     
     def get_graph(self) -> model.Graph:
         return self.get_config().graph
     
-    def get_paths(self) -> list(model.Path):
+    def get_paths(self) -> List[model.Path]:
         return self.get_graph().paths
     
-    def get_nodes(self) -> list(model.Node):
+    def get_nodes(self) -> List[model.Node]:
         return self.get_graph().nodes
     
     def get_nodes_count(self) -> int:
         return len(self.get_nodes())
     
-    def get_cost_adj(self) -> list(float):
-        nodes_count = self.get_nodes_count()
+    def get_cost_adj(self, nodes_count : int) -> List[List[float]]:
+
         adj = [[float("inf") for _ in range(nodes_count)] for _ in range(nodes_count)]
         for path in self.get_paths():
-            adj[path.node1][path.node2] = path.price
-            adj[path.node2][path.node1] = path.price
+            adj[path.first_node_id][path.second_node_id] = path.price
+            adj[path.second_node_id][path.first_node_id] = path.price
         
         for i in range(nodes_count):
             adj[i][i] = 0
         
         return adj
     
-    def get_adj(self) -> list(int):
-        nodes_count = self.get_nodes_count()
+    def get_adj(self, nodes_count : int) -> List[List[int]]:
         adj = [[float("inf") for _ in range(nodes_count)] for _ in range(nodes_count)]
         for path in self.get_paths():
-            adj[path.node1][path.node2] = 1
-            adj[path.node2][path.node1] = 1
+            adj[path.first_node_id][path.second_node_id] = 1
+            adj[path.second_node_id][path.first_node_id] = 1
         
         for i in range(nodes_count):
             adj[i][i] = 0
