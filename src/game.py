@@ -1,4 +1,5 @@
 from src import model
+from typing import List
 
 class Game:
     def __init__(self, view : model.GameView):
