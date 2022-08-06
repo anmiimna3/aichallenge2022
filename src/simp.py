@@ -1,6 +1,5 @@
 import model
 
-
 def get_path(graph, src, dest):
     adj = [[] for i in range(len(graph))]
     for i in range(len(graph)):
