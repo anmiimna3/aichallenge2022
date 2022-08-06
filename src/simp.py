@@ -1,6 +1,9 @@
-import src.model
+from src.model import Agent, AgentType, Graph, Node
+
 
 def get_path(graph, src, dest):
+    if src == dest:
+        return []
     adj = [[] for i in range(len(graph))]
     for i in range(len(graph)):
         for j in range(len(graph[i])):
@@ -42,18 +45,18 @@ def get_path(graph, src, dest):
 def get_point_thief_one(visible_agents, costs, node_id, opposite_team):
     min_len = 1e5
     for i in visible_agents:
-        i: src.model.Agent
-        if i.team == opposite_team and i.agent_type == src.model.AgentType.POLICE:
+        i: Agent
+        if i.team == opposite_team and i.agent_type == AgentType.POLICE:
             ans = get_path(costs, node_id, i.node_id)
             if len(ans) > min_len:
                 min_len = len(ans)
     return min_len
 
 
-def get_point_thief_all(visible_agents, costs, opposite_team, graph: src.model.Graph):
+def get_point_thief_all(visible_agents, costs, opposite_team, graph: Graph):
     ans = [0] * len(graph.nodes)
     for i in graph.nodes:
-        i: src.model.Node
+        i: Node
         ans[i.id] = get_point_thief_one(
             visible_agents, costs, i.id, opposite_team)
     return ans

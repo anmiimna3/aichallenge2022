@@ -4,7 +4,6 @@ from src.simp import get_path, get_point_thief_all
 
 
 def get_thief_starting_node(view: GameView) -> int:
-    # write your code here
     return 2
 
 
