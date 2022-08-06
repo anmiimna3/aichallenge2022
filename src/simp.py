@@ -1,3 +1,4 @@
+from typing import List
 import model
 
 def get_path(graph, src, dest):
@@ -44,6 +45,7 @@ def get_path(graph, src, dest):
 def get_point_thief_one(visible_agents, costs, node_id, opposite_team):
     min_len = 1000000
     for i in visible_agents:
+        i: model.Agent
         if i.team == opposite_team and i.agent_type == model.AgentType.POLICE:
             ans = get_path(costs, node_id, i.node_id)
             if len(ans) > min_len:
@@ -52,8 +54,23 @@ def get_point_thief_one(visible_agents, costs, node_id, opposite_team):
 
 
 
-def get_point_thief_all(visible_agents, costs, opposite_team, graph):
+def get_point_thief_all(visible_agents, costs, opposite_team, graph: model.Graph):
     ans = [0] * len(graph.nodes)
     for i in graph.nodes:
+        i: model.Node
         ans[i.id] = get_point_thief_one(visible_agents, costs, i.id, opposite_team)
     return ans
+
+
+
+def get_cost_adj(paths, nodes_count : int) -> List[List[float]]:
+
+    adj = [[float("inf") for _ in range(nodes_count)] for _ in range(nodes_count)]
+    for path in paths:
+        adj[path.first_node_id][path.second_node_id] = path.price
+        adj[path.second_node_id][path.first_node_id] = path.price
+    
+    for i in range(nodes_count):
+        adj[i][i] = 0
+    
+    return adj
