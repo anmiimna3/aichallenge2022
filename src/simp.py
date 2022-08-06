@@ -1,8 +1,8 @@
 from typing import List
-import model
+import src.model
 
 def get_path(graph, src, dest):
-    adj = [[] for i in range(len(graph))]
+    adj = [[] for i in range(len(graph) + 1)]
     for i in range(len(graph)):
         for j in range(len(graph[i])):
             if(graph[i][j] != float('inf')):
@@ -43,22 +43,25 @@ def get_path(graph, src, dest):
 
 
 def get_point_thief_one(visible_agents, costs, node_id, opposite_team):
+    POLICE = 1
     min_len = 1000000
     for i in visible_agents:
-        i: model.Agent
-        if i.team == opposite_team and i.agent_type == model.AgentType.POLICE:
+        i: src.model.Agent
+        if i.team == opposite_team and i.agent_type == POLICE:
             ans = get_path(costs, node_id, i.node_id)
-            if len(ans) > min_len:
+            if len(ans) < min_len:
                 min_len = len(ans)
+                print("agent " + str(i.id) + " is close!")
     return min_len
 
 
 
-def get_point_thief_all(visible_agents, costs, opposite_team, graph: model.Graph):
-    ans = [0] * len(graph.nodes)
+def get_point_thief_all(visible_agents, costs, opposite_team, graph: src.model.Graph):
+    ans = [0] * (len(graph.nodes) + 1)
     for i in graph.nodes:
-        i: model.Node
+        i: src.model.Node
         ans[i.id] = get_point_thief_one(visible_agents, costs, i.id, opposite_team)
+        print("this is point of " + str(i.id) + ": " + str(ans[i.id]))
     return ans
 
 
