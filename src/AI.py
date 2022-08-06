@@ -1,11 +1,9 @@
 from src.client import GameClient
-from src.model import GameView
-from src import game as Game
+from src.model import Agent, GameView
 
 
 def get_thief_starting_node(view: GameView) -> int:
     # write your code here
-    game = Game(view)
     return 2
 
 
@@ -23,8 +21,6 @@ class AI:
 
     def thief_move_ai(self, view: GameView) -> int:
         # write your code here
-        game = Game(view)
-
         message = ''
         for m in range(len(view.visible_agents)):
             message = message + '0'
@@ -32,8 +28,6 @@ class AI:
         return 2
 
     def police_move_ai(self, view: GameView) -> int:
-        # write your code here
-        game = Game(view)
-
+        # write your code here       
         self.phone.send_message('00101001')
         return 1
