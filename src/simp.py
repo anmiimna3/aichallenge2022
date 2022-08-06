@@ -41,7 +41,7 @@ def get_path(graph, src, dest):
 
 
 def get_point_thief_one(visible_agents, costs, node_id, opposite_team):
-    min_len = 1000000
+    min_len = 1e5
     for i in visible_agents:
         i: model.Agent
         if i.team == opposite_team and i.agent_type == model.AgentType.POLICE:
