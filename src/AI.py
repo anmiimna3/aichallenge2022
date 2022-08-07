@@ -55,7 +55,12 @@ class AI:
         opp_team = FIRST if view.viewer.team == SECOND else SECOND
         if not self.init:
             self.init = True
-            self.adj = simp.get_cost_adj(view.config.graph.paths, len(view.config.graph.nodes) + 1)
+            self.adj = [[] for _ in range(len(view.config.graph.nodes) + 1)]
+            for j in view.config.graph.paths:
+                j: Path
+                self.adj[j.first_node_id].append(j.second_node_id)
+                self.adj[j.second_node_id].append(j.first_node_id)
+
         ans = view.viewer.node_id
         dist = simp.get_point_thief_one(view.visible_agents, self.adj, view.viewer.node_id, opp_team)
         for j in view.config.graph.paths:

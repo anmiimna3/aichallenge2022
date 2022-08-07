@@ -1,13 +1,7 @@
 from typing import List
 import src.model
 
-def get_path(graph, src, dest):
-    adj = [[] for i in range(len(graph) + 1)]
-    for i in range(len(graph)):
-        for j in range(len(graph[i])):
-            if(graph[i][j] != float('inf')):
-                adj[i].append(j)
-                adj[j].append(i)
+def get_path(adj, src, dest):
     v = len(adj)
     pred = [0 for i in range(v)]
     dist = [0 for i in range(v)]
@@ -42,13 +36,13 @@ def get_path(graph, src, dest):
 
 
 
-def get_point_thief_one(visible_agents, costs, node_id, opposite_team):
+def get_point_thief_one(visible_agents, adj, node_id, opposite_team):
     POLICE = 1
     min_len = 1000000
     for i in visible_agents:
         i: src.model.Agent
         if i.team == opposite_team and i.agent_type == POLICE:
-            ans = get_path(costs, node_id, i.node_id)
+            ans = get_path(adj, node_id, i.node_id)
             if len(ans) < min_len:
                 min_len = len(ans)
                 print("agent " + str(i.id) + " is close!")
