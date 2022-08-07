@@ -46,6 +46,7 @@ class AI:
     def __init__(self, phone: Phone):
         self.phone = phone
         self.adj = [[]]
+        self.prediction_values = [0 for i in range(len(view.config.graph.nodes)+1)]
         self.init = False
 
     def thief_move_ai(self, view: GameView) -> int:
@@ -76,6 +77,30 @@ class AI:
                     dist = k
                     ans = j.first_node_id
         return ans
+
+    def predict_thief_locations(self, view: GameView):
+        temp = list()
+        for i in range(1, len(view.config.graph.nodes)+1):
+            if self.prediction_values[i]>0:
+                for j in self.adj[i]:
+                    if self.prediction_values[j]==0:
+                        temp.append(j)
+                self.prediction_values[i]+=1
+        for i in temp:
+            self.prediction_values[i]+=1
+
+    def update_thief_locations(self, view: GameView):
+        for i in range(len(view.config.graph.nodes)+1):
+            self.prediction_values[i] = 0
+        FIRST = 0
+        SECOND = 1
+        THIEF = 0
+        POLICE = 1
+        opp_team = FIRST if view.viewer.team == SECOND else SECOND
+        for i in view.visible_agents:
+            if i.agent_type == THIEF and i.team == opp_team:
+                prediction_values[i.node_id] = 1
+
 
     def police_move_ai(self, view: GameView) -> int:
         ans = []
