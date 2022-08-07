@@ -1,13 +1,37 @@
-import optparse
+import random
 from src import model
 from src.client import GameClient
+from src.hide_and_seek_pb2 import THIEF
 from src.model import GameView, Team, Agent, AgentType, Node, Path
 from src import simp
 
 
 def get_thief_starting_node(view: GameView) -> int:
-    # write your code here
-    return 2
+    adj = [[] for _ in range(len(view.config.graph.nodes) + 1)]
+    for j in view.config.graph.paths:
+        j: Path
+        adj[j.first_node_id].append(j.second_node_id)
+        adj[j.second_node_id].append(j.first_node_id)
+    FIRST = 0
+    SECOND = 1
+    THIEF = 0
+    POLICE = 1
+    ans = [1] * (len(view.config.graph.nodes) + 1)
+    ans[0] = 0
+    opp_team = FIRST if view.viewer.team == SECOND else SECOND
+    for i in view.visible_agents:
+        i: Agent
+        if i.agent_type == THIEF and i.team == 1 - opp_team:
+            ans[i.node_id] = 0
+        if i.agent_type == POLICE and i.team == opp_team:
+            k = simp.possible_place(adj, i.node_id, 6)
+            for j in k:
+                ans[j] = 0
+    final = []
+    for i in range(len(ans)):
+        if ans[i] == 1:
+            final.append(i)
+    return random.choice(final)
 
 
 class Phone:
@@ -49,6 +73,11 @@ class AI:
         return ans
 
     def police_move_ai(self, view: GameView) -> int:
-        # write your code here       
-        self.phone.send_message('00101001')
-        return 1
+        ans = []
+        for i in view.config.graph.paths:
+            i: Path
+            if i.first_node_id == view.viewer.node_id:
+                ans.append(i.second_node_id)
+            if i.second_node_id == view.viewer.node_id:
+                ans.append(i.first_node_id)
+        return random.choice(ans)

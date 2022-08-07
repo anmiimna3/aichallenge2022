@@ -77,3 +77,19 @@ def get_cost_adj(paths, nodes_count : int) -> List[List[float]]:
         adj[i][i] = 0
     
     return adj
+
+
+def possible_place(adj: List[List[int]], node_id: int, nnumber_of_rounds: int) -> List[int]:
+    visited = [node_id]
+    queue = [[node_id, 0]]
+    while queue:
+        temp = queue[0]
+        queue.pop(0)
+        if temp[1] == nnumber_of_rounds:
+            continue
+        for i in adj[temp[0]]:
+            if i not in visited:
+                visited.append(i)
+                ans = [i, temp[1] + 1]
+                queue.append(ans)
+    return visited
