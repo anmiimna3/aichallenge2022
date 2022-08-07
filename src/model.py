@@ -187,7 +187,8 @@ class Chat:
         self.id = id
         self.from_agent_id = from_agent_id
         self.text = text
-        self.turn : int = None
+        self.turn: int = None
+
     @staticmethod
     def to_model(chat: hide_and_seek_pb2.Chat):
         return Chat(id=chat.id, from_agent_id=chat.fromAgentId, text=chat.text)
@@ -196,8 +197,10 @@ class Chat:
         return hash(self.id)
 
     def __eq__(self, other):
-        if not isinstance(other, type(self)): return NotImplemented
+        if not isinstance(other, type(self)):
+            return NotImplemented
         return self.id == other.id
+
 
 class GameView:
     def __init__(self, status: GameStatus,

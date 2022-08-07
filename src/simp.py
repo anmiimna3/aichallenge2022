@@ -69,6 +69,7 @@ def get_cost_adj(paths, nodes_count: int) -> List[List[float]]:
     adj = [[float("inf") for _ in range(nodes_count)]
            for _ in range(nodes_count)]
     for path in paths:
+        path: src.model.Path
         adj[path.first_node_id][path.second_node_id] = path.price
         adj[path.second_node_id][path.first_node_id] = path.price
 
