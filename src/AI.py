@@ -105,11 +105,11 @@ class AI:
                     for j in k:
                         ans[j] = 0
             self.prediction_values = ans
-        elif(view.turn in view.config.visible_turns):
+        elif(view.turn.turn_number in view.config.visible_turns):
             init_thief_locations(view, self.prediction_values)
-
+        else:
+            update_thief_locations(view, self.prediction_values, self.adj)
         flag = False
-        update_thief_locations(view, self.prediction_values, self.adj)
         while not flag:
             for i in self.adj[view.viewer.node_id]:
                 if(self.prediction_values[i] == 0):
