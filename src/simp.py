@@ -2,7 +2,7 @@ from typing import List
 import src.model
 
 
-def get_path(adj, src, dest):
+def get_path(adj, src, dest) -> List[int]:
     v = len(adj)
     pred = [0 for i in range(v)]
     dist = [0 for i in range(v)]
@@ -35,7 +35,7 @@ def get_path(adj, src, dest):
     return []
 
 
-def get_point_thief_one(visible_agents, adj, node_id, opposite_team):
+def get_point_thief_one(visible_agents, adj, node_id, opposite_team) -> int:
     POLICE = 1
     min_len = 1000000
     for i in visible_agents:
@@ -48,7 +48,7 @@ def get_point_thief_one(visible_agents, adj, node_id, opposite_team):
     return min_len
 
 
-def get_point_thief_all(visible_agents, costs, opposite_team, graph: src.model.Graph):
+def get_point_thief_all(visible_agents, costs, opposite_team, graph: src.model.Graph) -> List[int]:
     ans = [0] * (len(graph.nodes) + 1)
     for i in graph.nodes:
         i: src.model.Node
@@ -59,10 +59,10 @@ def get_point_thief_all(visible_agents, costs, opposite_team, graph: src.model.G
 
 
 def get_cost_adj(paths, nodes_count: int) -> List[List[float]]:
-
     adj = [[float("inf") for _ in range(nodes_count)]
            for _ in range(nodes_count)]
     for path in paths:
+        path: src.model.Path
         adj[path.first_node_id][path.second_node_id] = path.price
         adj[path.second_node_id][path.first_node_id] = path.price
 
