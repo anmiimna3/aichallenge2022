@@ -1,7 +1,8 @@
 import random
+from sys import flags
 from src.client import GameClient
 from src.model import GameView, Agent, Path
-from src.simp import possible_place, get_point_thief_one
+from src.simp import possible_place, get_point_thief, init_thief_locations, get_cost_adj
 
 
 def get_thief_starting_node(view: GameView) -> int:
@@ -42,6 +43,7 @@ class AI:
     def __init__(self, phone: Phone):
         self.phone = phone
         self.adj = [[]]
+        self.costs = [[]]
         self.prediction_values = []
         self.init = False
 
@@ -57,20 +59,22 @@ class AI:
                 j: Path
                 self.adj[j.first_node_id].append(j.second_node_id)
                 self.adj[j.second_node_id].append(j.first_node_id)
+            self.costs = get_cost_adj(
+                view.config.graph.paths, len(view.config.graph.nodes))
 
         ans = view.viewer.node_id
-        dist = get_point_thief_one(
+        dist = get_point_thief(
             view.visible_agents, self.adj, view.viewer.node_id, opp_team)
         for j in view.config.graph.paths:
             j: Path
             if j.first_node_id == view.viewer.node_id:
-                k = get_point_thief_one(
+                k = get_point_thief(
                     view.visible_agents, self.adj, j.second_node_id, opp_team)
                 if k >= dist:
                     dist = k
                     ans = j.second_node_id
             if j.second_node_id == view.viewer.node_id:
-                k = get_point_thief_one(
+                k = get_point_thief(
                     view.visible_agents, self.adj, j.first_node_id, opp_team)
                 if k >= dist:
                     dist = k
@@ -85,11 +89,33 @@ class AI:
                 j: Path
                 self.adj[j.first_node_id].append(j.second_node_id)
                 self.adj[j.second_node_id].append(j.first_node_id)
-        ans = []
-        for i in view.config.graph.paths:
-            i: Path
-            if i.first_node_id == view.viewer.node_id:
-                ans.append(i.second_node_id)
-            if i.second_node_id == view.viewer.node_id:
-                ans.append(i.first_node_id)
-        return random.choice(ans)
+            self.prediction_values = [0] * (len(view.config.graph.nodes) + 1)
+            self.costs = get_cost_adj(
+                view.config.graph.paths, len(view.config.graph.nodes))
+
+        ans = view.viewer.node_id
+        if(view.turn < view.config.visible_turns[0]):
+            pass
+        elif(view.turn in view.config.visible_turns):
+            init_thief_locations(view, self.prediction_values)
+
+        else:
+            flag = False
+            for i in self.adj[view.viewer.node_id]:
+                if(self.prediction_values[i] == 0):
+                    continue
+                else:
+                    flag = True
+
+                if(self.prediction_values[i] > self.prediction_values[ans]):
+                    ans = i
+                elif(self.prediction_values[i] == self.prediction_values[ans]):
+                    if(self.costs[view.viewer.node_id][i] < self.costs[view.viewer.node_id][ans]):
+                        ans = i
+            if(not flag):
+                for i in self.adj[view.viewer.node_id]:
+                    if(self.costs[view.viewer.node_id][i] < self.costs[view.viewer.node_id][ans]):
+                        ans = i
+            return ans
+
+        return random.choice([1, 2, 3])

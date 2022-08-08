@@ -35,7 +35,7 @@ def get_path(adj, src, dest) -> List[int]:
     return []
 
 
-def get_point_thief_one(visible_agents, adj, node_id, opposite_team) -> int:
+def get_point_thief(visible_agents, adj, node_id, opposite_team) -> int:
     POLICE = 1
     min_len = 1000000
     for i in visible_agents:
@@ -46,16 +46,6 @@ def get_point_thief_one(visible_agents, adj, node_id, opposite_team) -> int:
                 min_len = len(ans)
                 print("agent " + str(i.id) + " is close!")
     return min_len
-
-
-def get_point_thief_all(visible_agents, costs, opposite_team, graph: Graph) -> List[int]:
-    ans = [0] * (len(graph.nodes) + 1)
-    for i in graph.nodes:
-        i: Node
-        ans[i.id] = get_point_thief_one(
-            visible_agents, costs, i.id, opposite_team)
-        print("this is point of " + str(i.id) + ": " + str(ans[i.id]))
-    return ans
 
 
 def get_cost_adj(paths, nodes_count: int) -> List[List[float]]:
@@ -100,12 +90,12 @@ def predict_thief_locations(view: GameView, prediction_values: List[int], adj: L
         prediction_values[i] += 1
 
 
-def update_thief_locations(view: GameView, prediction_values):
-    for i in range(len(view.config.graph.nodes)+1):
-        prediction_values[i] = 0
+def init_thief_locations(view: GameView, prediction_values):
     THIEF = 0
     opp_team = not view.viewer.team
     for i in view.visible_agents:
         i: Agent
         if i.agent_type == THIEF and i.team == opp_team:
             prediction_values[i.node_id] = 1
+        else:
+            prediction_values[i.node_id] = 0
