@@ -109,6 +109,7 @@ class AI:
             init_thief_locations(view, self.prediction_values)
 
         flag = False
+        update_thief_locations(view, self.prediction_values, self.adj)
         while not flag:
             for i in self.adj[view.viewer.node_id]:
                 if(self.prediction_values[i] == 0):
