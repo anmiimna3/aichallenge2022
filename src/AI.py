@@ -105,7 +105,7 @@ class AI:
                     for j in k:
                         ans[j] = 0
             self.prediction_values = ans
-        elif(view.turn in view.config.visible_turns):
+        elif(view.turn.turn_number in view.config.visible_turns):
             init_thief_locations(view, self.prediction_values)
 
         flag = False
