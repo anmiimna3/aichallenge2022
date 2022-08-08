@@ -78,7 +78,7 @@ def possible_place(adj: List[List[int]], node_id: int, nnumber_of_rounds: int) -
     return visited
 
 
-def predict_thief_locations(view: GameView, prediction_values: List[int], adj: List[List[int]]):
+def update_thief_locations(view: GameView, prediction_values: List[int], adj: List[List[int]]):
     temp = []
     for i in range(1, len(view.config.graph.nodes)+1):
         if prediction_values[i] > 0:

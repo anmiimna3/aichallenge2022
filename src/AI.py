@@ -89,8 +89,8 @@ class AI:
             self.costs = get_cost_adj(
                 view.config.graph.paths, len(view.config.graph.nodes)+1)
 
-        ans = view.viewer.node_id
-        if(view.turn.turn_number < view.config.visible_turns[0].turn_number):
+        answer = view.viewer.node_id
+        if(view.turn.turn_number < view.config.visible_turns[0]):
             THIEF = 0
             POLICE = 1
             ans = [1] * (len(view.config.graph.nodes) + 1)
@@ -115,11 +115,11 @@ class AI:
                     continue
                 else:
                     flag = True
-                if(self.prediction_values[i] > self.prediction_values[ans]):
-                    ans = i
-                elif(self.prediction_values[i] == self.prediction_values[ans]):
-                    if(self.costs[view.viewer.node_id][i] < self.costs[view.viewer.node_id][ans]):
-                        ans = i
+                if(self.prediction_values[i] > self.prediction_values[answer] and view.balance > self.costs[i][view.viewer.node_id]):
+                    answer = i
+                elif(self.prediction_values[i] == self.prediction_values[answer]):
+                    if(self.costs[view.viewer.node_id][i] < self.costs[view.viewer.node_id][answer]):
+                        answer = i
             if(not flag):
                 update_thief_locations(view, self.prediction_values, self.adj)
-        return ans
+        return answer
