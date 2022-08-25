@@ -45,7 +45,6 @@ def get_point_thief(visible_agents, adj, node_id, opposite_team) -> int:
             ans = get_path(adj, node_id, i.node_id)
             if len(ans) < min_len:
                 min_len = len(ans)
-                print("agent " + str(i.id) + " is close!")
     return min_len
 
 
@@ -100,3 +99,40 @@ def init_thief_locations(view: GameView, prediction_values):
             prediction_values[i.node_id] = 1
         else:
             prediction_values[i.node_id] = 0
+
+
+def get_path_limited(adj, src, dest, money, costs) -> List[int]:
+    v = len(adj)
+    pred = [0 for _ in range(v)]
+    dist = [0 for _ in range(v)]
+    costs_from_src = [0 for _ in range(v)]
+    queue = []
+    visited = [False for i in range(v)]
+    for i in range(v):
+        dist[i] = 1e5
+        pred[i] = -1
+        costs_from_src[i] = 1e5
+    costs_from_src[src] = 0
+    visited[src] = True
+    dist[src] = 0
+    queue.append(src)
+    while (len(queue) != 0):
+        u = queue[0]
+        queue.pop(0)
+        for i in range(len(adj[u])):
+            if (visited[adj[u][i]] == False and costs_from_src[u] + costs[u][adj[u][i]] <= money):
+                visited[adj[u][i]] = True
+                dist[adj[u][i]] = dist[u] + 1
+                pred[adj[u][i]] = u
+                costs_from_src[adj[u][i]] = costs_from_src[u] + costs[u][adj[u][i]]
+                queue.append(adj[u][i])
+                if (adj[u][i] == dest):
+                    path = []
+                    crawl = dest
+                    crawl = dest
+                    path.append(crawl)
+                    while (pred[crawl] != -1):
+                        path.append(pred[crawl])
+                        crawl = pred[crawl]
+                    return path[::-1]
+    return []

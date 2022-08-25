@@ -1,7 +1,7 @@
 import random
 from src.client import GameClient
 from src.model import GameView, Agent, Path
-from src.simp import possible_place, get_point_thief, init_thief_locations, get_cost_adj, update_thief_locations
+from src.simp import get_path_limited, possible_place, get_point_thief, init_thief_locations, get_cost_adj, update_thief_locations, get_path
 
 
 def get_thief_starting_node(view: GameView) -> int:
