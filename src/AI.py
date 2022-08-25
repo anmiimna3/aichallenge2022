@@ -98,6 +98,7 @@ class AI:
                     FlagSolo = False
                     if i.id < view.viewer.id:
                         FlagMin = False
+                        break
         if(view.turn.turn_number in view.config.visible_turns):
             self.destination = get_closest_thief(view, self.adj, self.costs)
             print("here " + str(self.destination))
