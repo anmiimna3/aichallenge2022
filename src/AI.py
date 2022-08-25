@@ -1,7 +1,7 @@
 import random
 from src.client import GameClient
 from src.model import GameView, Agent, Path
-from src.simp import get_path_limited, possible_place, get_point_thief, init_thief_locations, get_cost_adj, update_thief_locations, get_path
+from src.simp import get_path_limited, possible_place, get_point_thief, init_thief_locations, get_cost_adj, update_thief_locations, get_path, get_closest_thief
 
 
 def get_thief_starting_node(view: GameView) -> int:
@@ -44,6 +44,7 @@ class AI:
         self.adj = [[]]
         self.costs = [[]]
         self.prediction_values = []
+        self.destination = 0
         self.init = False
 
     def thief_move_ai(self, view: GameView) -> int:
@@ -97,8 +98,9 @@ class AI:
                     FlagSolo = False
                     if i.id < view.viewer.id:
                         FlagMin = False
-        if(view.turn in view.config.visible_turns):
+        if(view.turn.turn_number in view.config.visible_turns):
             self.destination = get_closest_thief(view, self.adj, self.costs)
+            print("here " + str(self.destination))
         elif(self.destination == view.viewer.node_id):
             self.destination = 0
 

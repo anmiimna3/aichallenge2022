@@ -142,9 +142,10 @@ def get_closest_thief(view: GameView, adj: List[int], costs: List[List[int]]) ->
     ansList = [0]*1000
     temp = []
     for i in view.visible_agents:
+        i: Agent
         if i.agent_type != view.viewer.agent_type and i.team != view.viewer.team:
-            temp = get_path_limited(adj, view.viewer.node_id, i.node_id, view.viewer.balance, costs)
-            if len(temp)<len(ansList):
+            temp = get_path_limited(adj, view.viewer.node_id, i.node_id, view.balance, costs)
+            if 0 < len(temp) < len(ansList):
                 ans = i.node_id
                 ansList = temp
     return ans
