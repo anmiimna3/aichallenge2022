@@ -137,15 +137,23 @@ def get_path_limited(adj, src, dest, money, costs) -> List[int]:
                     return path[::-1]
     return []
 
-def get_closest_thief(view: GameView, adj: List[int], costs: List[List[int]]) -> int:
+def update_thieves(view: GameView, adj: List[int], costs: List[List[int]], thief_id: int) -> List[int]:
     ans = 0
     ansList = [0]*1000
     temp = []
+    Target_is_alive = True
+    for i in view.visible_agents:
+        i: Agent
+        if i.id == thief_id:
+            if i.is_dead == False:
+                return [i.node_id, i.id]
+            break
     for i in view.visible_agents:
         i: Agent
         if i.agent_type != view.viewer.agent_type and i.team != view.viewer.team and i.is_dead == False:
             temp = get_path_limited(adj, view.viewer.node_id, i.node_id, view.balance, costs)
             if 0 < len(temp) < len(ansList):
                 ans = i.node_id
+                thief_id = i.id
                 ansList = temp
-    return ans
+    return [ans, thief_id]
