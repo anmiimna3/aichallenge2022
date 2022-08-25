@@ -136,3 +136,15 @@ def get_path_limited(adj, src, dest, money, costs) -> List[int]:
                         crawl = pred[crawl]
                     return path[::-1]
     return []
+
+def get_closest_thief(view: GameView, adj: List[int], costs: List[List[int]]) -> int:
+    ans = 0
+    ansList = [0]*1000
+    temp = []
+    for i in view.visible_agents:
+        if i.agent_type != view.viewer.agent_type and i.team != view.viewer.team:
+            temp = get_path_limited(adj, view.viewer.node_id, i.node_id, view.viewer.balance, costs)
+            if len(temp)<len(ansList):
+                ans = i.node_id
+                ansList = temp
+    return ans

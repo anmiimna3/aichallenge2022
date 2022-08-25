@@ -88,39 +88,28 @@ class AI:
             self.prediction_values = [0] * (len(view.config.graph.nodes) + 1)
             self.costs = get_cost_adj(
                 view.config.graph.paths, len(view.config.graph.nodes)+1)
+        FlagSolo = True
+        FlagMin = True
+        for i in view.visible_agents:
+            i: Agent
+            if i.agent_type == view.viewer.agent_type and i.team == view.viewer.team:
+                if i.node_id == view.viewer.node_id:
+                    FlagSolo = False
+                    if i.id < view.viewer.id:
+                        FlagMin = False
+        if(view.turn in view.config.visible_turns):
+            self.destination = get_closest_thief(view, self.adj, self.costs)
+        elif(self.destination == view.viewer.node_id):
+            self.destination = 0
 
-        answer = view.viewer.node_id
-        if(view.turn.turn_number < view.config.visible_turns[0]):
-            THIEF = 0
-            POLICE = 1
-            ans = [1] * (len(view.config.graph.nodes) + 1)
-            ans[0] = 0
-            opp_team = not view.viewer.team
-            for i in view.visible_agents:
-                i: Agent
-                if i.agent_type == THIEF and i.team == view.viewer.team:
-                    ans[i.node_id] = 0
-                if i.agent_type == POLICE and i.team == opp_team:
-                    k = possible_place(self.adj, i.node_id, 6)
-                    for j in k:
-                        ans[j] = 0
-            self.prediction_values = ans
-        elif(view.turn.turn_number in view.config.visible_turns):
-            init_thief_locations(view, self.prediction_values)
+        if(self.destination == 0 or (FlagSolo == False and FlagMin == True)):
+            candidate = random.choice(self.adj[view.viewer.node_id])
+            while self.costs[view.viewer.node_id][candidate] > view.balance:
+                candidate = random.choice(self.adj[view.viewer.node_id])
+            return candidate
+
         else:
-            update_thief_locations(view, self.prediction_values, self.adj)
-        flag = False
-        while not flag:
-            for i in self.adj[view.viewer.node_id]:
-                if(self.prediction_values[i] == 0):
-                    continue
-                else:
-                    flag = True
-                if(self.prediction_values[i] > self.prediction_values[answer] and view.balance > self.costs[i][view.viewer.node_id]):
-                    answer = i
-                elif(self.prediction_values[i] == self.prediction_values[answer]):
-                    if(self.costs[view.viewer.node_id][i] < self.costs[view.viewer.node_id][answer]):
-                        answer = i
-            if(not flag):
-                update_thief_locations(view, self.prediction_values, self.adj)
-        return answer
+            temp = get_path_limited(self.adj, view.viewer.node_id, self.destination, view.balance, self.costs)
+            if len(temp):
+                return temp[1]
+        return view.viewer.node_id
