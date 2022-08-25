@@ -46,9 +46,16 @@ class AI:
         self.prediction_values = []
         self.destination = 0
         self.init = False
+        self.redFlag = 0
 
     def thief_move_ai(self, view: GameView) -> int:
         # write your code here
+        # if (view.turn.turn_number % 6 == 1):
+        #     self.phone.send_message(bin(view.viewer.node_id)[2:])
+        # if (view.turn.turn_number % 6 == 3):
+        #     for i in range(1, len(view.chat_box)):
+        if view.turn.turn_number - 1 in view.config.visible_turns:
+            self.redFlag = view.viewer.node_id
         opp_team = not view.viewer.team
         if not self.init:
             self.init = True
@@ -62,21 +69,26 @@ class AI:
         ans = view.viewer.node_id
         dist = get_point_thief(
             view.visible_agents, self.adj, view.viewer.node_id, opp_team)
+        data = [(ans, dist)]
         for j in view.config.graph.paths:
             j: Path
             if j.first_node_id == view.viewer.node_id:
                 k = get_point_thief(
                     view.visible_agents, self.adj, j.second_node_id, opp_team)
-                if k >= dist:
-                    dist = k
-                    ans = j.second_node_id
+                data.append((j.second_node_id, k))
             if j.second_node_id == view.viewer.node_id:
                 k = get_point_thief(
                     view.visible_agents, self.adj, j.first_node_id, opp_team)
-                if k >= dist:
-                    dist = k
-                    ans = j.first_node_id
-        return ans
+                data.append((j.first_node_id, k))
+        for i in range(len(data)):
+            for j in range(i, len(data)):
+                if data[j][1] >= data[i][1]:
+                    temp = data[i]
+                    data[i] = data[j]
+                    data[j] = temp
+        if (data[0][0] == self.redFlag and len(data) > 1):
+            return data[1][0]
+        return data[0][0]
 
     def police_move_ai(self, view: GameView) -> int:
         if not self.init:
